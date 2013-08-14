@@ -11,8 +11,10 @@ function Projective (kwargs) {
 
 	var A = [];
 	var B = [];
-	var Ai = [];
 	var C = [];
+	var Ai = [];
+	var Bi = [];
+	var Ci = [];
 	var T = [];
 	var offsetA = [];
 	var offsetB = [];
@@ -43,7 +45,9 @@ function Projective (kwargs) {
 			[b[2][0]*y[0], b[2][1]*y[1], b[2][2]*y[2]]
 		];
 		Ai = numeric.inv(A);
+		Bi = numeric.inv(B);
 		C = numeric.dot(B, Ai);
+		Ci = numeric.dot(A, Bi);
 	};
 	var affineTransform = function () {
 		A = new Array(2);
@@ -60,7 +64,10 @@ function Projective (kwargs) {
 				B[d][i] = self.to[i][d] - offsetB[d];
 			}
 		}
-		T = numeric.inv(A);
+		Ai = numeric.inv(A);
+		Bi = numeric.inv(B);
+		C = numeric.dot(B, Ai);
+		Ci = numeric.dot(A, Bi);
 	};
 
 	var init = function () {
@@ -78,11 +85,23 @@ function Projective (kwargs) {
 		}
 	};
 
+	self.inverse = function (point) {
+		var result;
+		if (self.from.length < 4) {
+			result = numeric.dot(Ci, [point[0] - offsetB[0], point[1] - offsetB[1]]);
+			result = [result[0] + offsetA[0], result[1] + offsetA[1]];
+		} else {
+			result = numeric.dot(Ci, [point[0] - offsetB[0], point[1] - offsetB[1], 1]);
+			result = [result[0]/result[2] + offsetA[0], result[1]/result[2] + offsetA[1]];
+		}
+		return result;
+	};
+
 	self.transform = function (point) {
 		var result;
 		if (self.from.length < 4) {
-			var coord = numeric.dot(T, numeric.sub(point, offsetA));
-			result = numeric.add(numeric.dot(B, coord), offsetB);
+			result = numeric.dot(C, [point[0] - offsetA[0], point[1] - offsetA[1]]);
+			result = [result[0] + offsetB[0], result[1] + offsetB[1]];
 		} else {
 			result = numeric.dot(C, [point[0] - offsetA[0], point[1] - offsetA[1], 1]);
 			result = [result[0]/result[2] + offsetB[0], result[1]/result[2] + offsetB[1]];
