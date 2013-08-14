@@ -54,6 +54,15 @@ describe('Basic', function() {
     ok(deep(obj2.transform([2,1]), [30,10]), "properly offsets");
   });
 
+  it('should work even if inverse offset', function () {
+    var obj2 = new Projective({ from: [[1,1],[2,2],[1,2]], to: [[20,10],[20,20],[10,20]] });
+    ok(obj2, "has object");
+    ok(deep(obj2.inverse([20,10]), [1,1]), "properly inverse transforms control point [0]");
+    ok(deep(obj2.inverse([20,20]), [2,2]), "properly inverse transforms control point [1]");
+    ok(deep(obj2.inverse([10,20]), [1,2]), "properly inverse transforms control point [2]");
+    ok(deep(obj2.inverse([30,10]), [2,1]), "properly inverse offsets");
+  });
+
 });
 
 describe('Warp', function() {
@@ -69,6 +78,40 @@ describe('Warp', function() {
     ok(obj2, "has object");
     ok(deep(obj2.transform([1.5,1.5]), [2.5,1.75]), "properly transforms (.5, .5)");
     ok(deep(obj2.transform([1.5,1]), [2.5,1]), "properly transforms (.5, 0)");
+  });
+
+});
+
+describe('Inverse persp', function() {
+
+  it('should work if inverse perspective transformed', function () {
+    var obj2 = new Projective({ from: [[0,0],[0,1],[1,1],[1,0]], to: [[0,0],[1,1],[2,1],[3,0]] });
+    ok(obj2, "has object");
+    ok(deep(obj2.inverse([1.5,0.75]), [0.5,0.5]), "properly transforms (.5, .5)");
+    ok(deep(obj2.inverse([1.5,0]), [0.5,0]), "properly transforms (.5, 0)");
+  });
+  it('should work even if offset', function () {
+    var obj2 = new Projective({ from: [[1,1],[1,2],[2,2],[2,1]], to: [[1,1],[2,2],[3,2],[4,1]] });
+    ok(obj2, "has object");
+    ok(deep(obj2.inverse([2.5,1.75]), [1.5,1.5]), "properly transforms (.5, .5)");
+    ok(deep(obj2.inverse([2.5,1]), [1.5,1]), "properly transforms (.5, 0)");
+  });
+
+});
+
+describe('Inverse warp', function() {
+
+  it('should work if perspective transformed', function () {
+    var obj2 = new Projective({ from: [[0,0],[0,1],[1,1],[1,0]], to: [[0,0],[1,1],[2,1],[3,0]] });
+    ok(obj2, "has object");
+    ok(deep(obj2.inverse([1.5,0.75]), [0.5,0.5]), "properly transforms (.5, .5)");
+    ok(deep(obj2.inverse([1.5,0]), [0.5,0]), "properly transforms (.5, 0)");
+  });
+  it('should work even if offset', function () {
+    var obj2 = new Projective({ from: [[1,1],[1,2],[2,2],[2,1]], to: [[1,1],[2,2],[3,2],[4,1]] });
+    ok(obj2, "has object");
+    ok(deep(obj2.inverse([2.5,1.75]), [1.5,1.5]), "properly transforms (.5, .5)");
+    ok(deep(obj2.inverse([2.5,1]), [1.5,1]), "properly transforms (.5, 0)");
   });
 
 });
