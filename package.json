@@ -13,7 +13,7 @@
     "url": "git@github.com:clockwork189/Affinity.git"
   },
   "scripts": {
-    "test": "mocha -R nyan test.js"
+    "test": "mocha -R nyan"
   },
   "main": "./affinity.js",
   "dependencies": {
